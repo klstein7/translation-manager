@@ -1,5 +1,6 @@
 import { CreateDomainForm } from "@/components/domains";
-import { CreateTranslationForm } from "@/components/translations/CreateTranslationForm";
+import { CreateTranslationForm } from "@/components/translations";
+
 import { useCreateSource, useDomains } from "@/hooks";
 import { CreateSourceSchema } from "@/schema/sources";
 import {

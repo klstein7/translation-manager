@@ -1,5 +1,8 @@
-import { useSources } from "@/hooks";
+import { useDeleteSource, useSources } from "@/hooks";
 import {
+  ActionIcon,
+  Alert,
+  Group,
   Highlight,
   LoadingOverlay,
   Spoiler,
@@ -9,10 +12,17 @@ import {
 } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
 import { useMemo, useState } from "react";
-import { MdSearch } from "react-icons/md";
+import { MdArrowForward, MdDelete, MdSearch, MdWarning } from "react-icons/md";
 import { matchSorter } from "match-sorter";
+import { useRouter } from "next/router";
+import { useModals } from "@mantine/modals";
+import { showNotification } from "@mantine/notifications";
 
 export const TranslationsDataTable = () => {
+  const deleteSourceMutation = useDeleteSource();
+
+  const router = useRouter();
+  const modals = useModals();
   const [search, setSearch] = useState("");
   const sources = useSources();
 
@@ -50,7 +60,6 @@ export const TranslationsDataTable = () => {
       <DataTable
         withBorder
         borderRadius="sm"
-        withColumnBorders
         striped
         highlightOnHover
         records={filteredSources}
@@ -102,6 +111,62 @@ export const TranslationsDataTable = () => {
                     ))}
                   </Stack>
                 </Spoiler>
+              );
+            },
+          },
+          {
+            accessor: "actions",
+            title: "",
+            width: 100,
+            render: ({ id, key }) => {
+              return (
+                <Group align="center" spacing={5} position="right">
+                  <ActionIcon
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Delete source",
+                        labels: {
+                          cancel: "Cancel",
+                          confirm: "Delete",
+                        },
+                        confirmProps: {
+                          color: "red",
+                          leftIcon: <MdDelete />,
+                          loading: deleteSourceMutation.isLoading,
+                        },
+                        onConfirm: async () => {
+                          await deleteSourceMutation.mutateAsync({ id });
+                          showNotification({
+                            title: "Source deleted",
+                            message: `Source "${key}" was deleted`,
+                            color: "red",
+                          });
+                        },
+                        children: (
+                          <Alert
+                            variant="outline"
+                            icon={<MdWarning />}
+                            color="red"
+                            title="Are you sure?"
+                          >
+                            This will delete the source <b>{key}</b> and all
+                            translations for it.{" "}
+                            <b>This action cannot be undone.</b>
+                          </Alert>
+                        ),
+                      });
+                    }}
+                  >
+                    <MdDelete />
+                  </ActionIcon>
+                  <ActionIcon
+                    onClick={() => {
+                      router.push(`/s/${id}`);
+                    }}
+                  >
+                    <MdArrowForward />
+                  </ActionIcon>
+                </Group>
               );
             },
           },

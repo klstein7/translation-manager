@@ -1,7 +1,21 @@
 import { CreateSourceSchema } from "@/schema/sources";
+import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
 export const sourceRouter = router({
+  get: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return ctx.prisma.source.findUniqueOrThrow({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
   find: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.source.findMany({
       include: {
@@ -35,6 +49,19 @@ export const sourceRouter = router({
               ...translation,
             })),
           },
+        },
+      });
+    }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.source.delete({
+        where: {
+          id: input.id,
         },
       });
     }),
