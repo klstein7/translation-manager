@@ -1,1 +1,1 @@
-export * from "./CreateTranslateForm";
+export * from "./CreateTranslationForm";

@@ -42,3 +42,4 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export type FindLanguageOutput = RouterOutputs["languages"]["find"];
+export type FindSourceOutput = RouterOutputs["sources"]["find"];

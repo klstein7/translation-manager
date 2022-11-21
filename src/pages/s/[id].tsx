@@ -1,20 +1,27 @@
+import { CreateTranslationForm } from "@/components/translations/CreateTranslationForm";
 import {
+  useCreateTranslation,
+  useDeleteTranslation,
   useDomains,
   useSource,
   useUpdateSource,
   useUpdateTranslation,
 } from "@/hooks";
 import { BaseLayout } from "@/layouts/BaseLayout";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   ActionIcon,
+  Alert,
   Anchor,
   Box,
   Breadcrumbs,
+  Button,
   Divider,
   FocusTrap,
   Group,
   LoadingOverlay,
   Select,
+  Space,
   Spoiler,
   Stack,
   Text,
@@ -22,23 +29,29 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
+import { useModals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
 import { Prism } from "@mantine/prism";
 import { IconHome } from "@tabler/icons";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { MdEdit } from "react-icons/md";
+import { MdAdd, MdDelete, MdEdit, MdWarning } from "react-icons/md";
 
 const TranslationPage = () => {
   const router = useRouter();
   const domains = useDomains();
+  const modals = useModals();
 
   const updateSourceMutation = useUpdateSource();
+  const createTranslationMutation = useCreateTranslation();
   const updateTranslationMutation = useUpdateTranslation();
+  const deleteTranslationMutation = useDeleteTranslation();
 
   const [editing, setEditing] = useState<string>();
   const theme = useMantineTheme();
   const source = useSource();
+
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const domainSelectItems = useMemo(() => {
     return (
@@ -164,7 +177,7 @@ const TranslationPage = () => {
         <Divider />
         <Box>
           <Text color="dimmed">Translations</Text>
-          <Stack spacing="xs">
+          <Stack ref={parent} spacing="xs">
             {source.data?.translations.map((translation) => (
               <Stack key={translation.id} spacing={0}>
                 {editing === translation.id ? (
@@ -177,6 +190,12 @@ const TranslationPage = () => {
                           await updateTranslationMutation.mutateAsync({
                             ...translation,
                             text: e.target.value,
+                          });
+                          showNotification({
+                            title: "Translation updated",
+                            message:
+                              "The translation has been updated successfully!",
+                            color: "green",
                           });
                         }
                         setEditing(undefined);
@@ -193,10 +212,54 @@ const TranslationPage = () => {
                     >
                       <ActionIcon
                         color="gray"
-                        size="sm"
+                        size="xs"
                         onClick={() => setEditing(translation.id)}
                       >
                         <MdEdit size={13} />
+                      </ActionIcon>
+                    </Tooltip>
+                    <Tooltip
+                      label={`Delete ${translation.language.name} translation`}
+                    >
+                      <ActionIcon
+                        color="gray"
+                        size="xs"
+                        onClick={() => {
+                          modals.openConfirmModal({
+                            title: "Delete translation",
+                            labels: {
+                              cancel: "Cancel",
+                              confirm: "Delete",
+                            },
+                            confirmProps: {
+                              color: "red",
+                              leftIcon: <MdDelete />,
+                            },
+                            onConfirm: async () => {
+                              await deleteTranslationMutation.mutateAsync({
+                                id: translation.id,
+                              });
+                              showNotification({
+                                title: "Translation deleted",
+                                message: "The translation has been deleted!",
+                                color: "red",
+                              });
+                            },
+                            children: (
+                              <Alert
+                                variant="outline"
+                                icon={<MdWarning />}
+                                color="red"
+                                title="Are you sure?"
+                              >
+                                Are you sure you want to delete this
+                                translation? This action cannot be undone.
+                              </Alert>
+                            ),
+                          });
+                        }}
+                      >
+                        <MdDelete size={13} />
                       </ActionIcon>
                     </Tooltip>
                   </Group>
@@ -207,9 +270,42 @@ const TranslationPage = () => {
               </Stack>
             ))}
           </Stack>
+          <Space h="sm" />
+          {editing === "addTranslation" ? (
+            <CreateTranslationForm
+              existingLanguages={
+                source.data?.translations.map(
+                  (translation) => translation.language.id
+                ) ?? []
+              }
+              onSubmit={async (values) => {
+                await createTranslationMutation.mutateAsync({
+                  ...values,
+                  sourceId: source.data?.id as string,
+                });
+                showNotification({
+                  title: "Translation created",
+                  message: "The translation has been created successfully!",
+                  color: "green",
+                });
+                setEditing(undefined);
+              }}
+              onCancel={() => setEditing(undefined)}
+            />
+          ) : (
+            <Button
+              size="xs"
+              variant="outline"
+              leftIcon={<MdAdd />}
+              onClick={() => {
+                setEditing("addTranslation");
+              }}
+            >
+              Add
+            </Button>
+          )}
         </Box>
         <Divider />
-
         <Stack spacing="xs">
           <Box>
             <Text color="dimmed">Usage</Text>

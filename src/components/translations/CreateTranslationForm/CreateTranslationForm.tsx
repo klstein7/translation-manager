@@ -1,70 +1,60 @@
 import { CreateLanguageForm } from "@/components/languages";
-import { useFormContext } from "@/components/sources";
 import { useLanguages } from "@/hooks";
-import type { CreateTranslationSchema } from "@/schema";
+import { CreateTranslationSchema } from "@/schema";
 import {
-  ActionIcon,
-  Box,
-  Button,
-  Group,
-  Loader,
-  Select,
   Stack,
+  Group,
+  Select,
+  Loader,
+  Button,
   Textarea,
-  useMantineTheme,
   Text,
+  useMantineTheme,
+  Box,
 } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-import { MdDelete, MdAdd } from "react-icons/md";
+import { useMemo, useState } from "react";
+import { MdAdd } from "react-icons/md";
 import type { z } from "zod";
 
+const CreateTranslationSchemaWithoutSource = CreateTranslationSchema.omit({
+  sourceId: true,
+});
+
 export type CreateTranslationFormProps = {
-  translation: z.infer<typeof CreateTranslationSchema>;
-  index: number;
+  existingLanguages: string[];
+  onSubmit?: (
+    values: z.infer<typeof CreateTranslationSchemaWithoutSource>
+  ) => void | Promise<void>;
+  onCancel?: () => void;
 };
 
 export const CreateTranslationForm = ({
-  translation,
-  index,
+  existingLanguages,
+  onSubmit,
+  onCancel,
 }: CreateTranslationFormProps) => {
-  const form = useFormContext();
-  const languages = useLanguages();
-  const theme = useMantineTheme();
-
   const [showLanguageForm, setShowLanguageForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const theme = useMantineTheme();
+  const languages = useLanguages();
+
+  const form = useForm<z.infer<typeof CreateTranslationSchemaWithoutSource>>({
+    validate: zodResolver(CreateTranslationSchemaWithoutSource),
+  });
 
   const languageSelectItems = useMemo(() => {
-    const getLanguage = (id: string) => {
-      return languages.data?.find((language) => language.id === id);
-    };
-    let filtered =
+    const out =
       languages.data?.map((language) => ({
         label: `${language.name} (${language.code})`,
         value: language.id,
       })) ?? [];
-    filtered = filtered.filter((language) => {
-      return !form.values.translations.some(
-        (translation) => translation.languageId === language.value
-      );
+    return out.filter((l) => {
+      return !existingLanguages.includes(l.value);
     });
-    if (form.values.translations[index]?.languageId) {
-      const language = getLanguage(form.values.translations[index]!.languageId);
-      if (language) {
-        filtered.push({
-          label: `${language.name} (${language.code})`,
-          value: language.id,
-        });
-      }
-    }
-    return filtered;
-  }, [form.values.translations, index, languages.data]);
-
-  useEffect(() => {
-    if (translation.languageId) {
-      setShowLanguageForm(false);
-    }
-  }, [translation.languageId]);
+  }, [existingLanguages, languages.data]);
 
   return (
     <Stack
@@ -75,17 +65,7 @@ export const CreateTranslationForm = ({
         borderRadius: theme.radius.sm,
       }}
     >
-      <Group position="apart">
-        <Text size="sm">Create new translation</Text>
-        {(form.values.translations?.length ?? 0) > 1 && (
-          <ActionIcon
-            size="xs"
-            onClick={() => form.removeListItem("translations", index)}
-          >
-            <MdDelete />
-          </ActionIcon>
-        )}
-      </Group>
+      <Text size="sm">Add a new translation</Text>
       <Group align="flex-end">
         <Select
           clearable
@@ -98,9 +78,9 @@ export const CreateTranslationForm = ({
           rightSection={
             languages.isLoading && <Loader size={20} color="blue" />
           }
-          {...form.getInputProps(`translations.${index}.languageId`)}
+          {...form.getInputProps("languageId")}
         />
-        {!showLanguageForm && !translation.languageId && (
+        {!showLanguageForm && !form.values.languageId && (
           <Button
             color="blue"
             variant="subtle"
@@ -144,8 +124,33 @@ export const CreateTranslationForm = ({
         description="The translated text"
         placeholder="e.g. Paiements Préautorisé"
         minRows={4}
-        {...form.getInputProps(`translations.${index}.text`)}
+        {...form.getInputProps("text")}
       />
+      <Group position="right" align="center">
+        {onCancel && (
+          <Button size="xs" variant="subtle" color="gray" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
+        <Button
+          size="xs"
+          loading={loading}
+          onClick={async () => {
+            form.validate();
+            if (form.isValid()) {
+              setLoading(true);
+              await onSubmit?.(form.values);
+              form.setValues({
+                languageId: "",
+                text: "",
+              });
+              setLoading(false);
+            }
+          }}
+        >
+          Add
+        </Button>
+      </Group>
     </Stack>
   );
 };

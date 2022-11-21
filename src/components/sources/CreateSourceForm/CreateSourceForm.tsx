@@ -1,9 +1,10 @@
 import { CreateDomainForm } from "@/components/domains";
-import { CreateTranslationForm } from "@/components/translations";
+import { CreateTranslationForm } from "@/components/translations/CreateTranslationForm";
 
 import { useCreateSource, useDomains, useLanguages } from "@/hooks";
 import { CreateSourceSchema } from "@/schema/sources";
 import {
+  ActionIcon,
   Box,
   Button,
   Group,
@@ -13,12 +14,14 @@ import {
   Text,
   Textarea,
   TextInput,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { createFormContext, zodResolver } from "@mantine/form";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdDelete } from "react-icons/md";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { z } from "zod";
 
 export const [FormProvider, useFormContext, useForm] =
@@ -36,6 +39,13 @@ export const CreateSourceForm = ({
   const createTranslationMutation = useCreateSource();
   const theme = useMantineTheme();
   const domains = useDomains();
+  const languages = useLanguages();
+
+  const [parent] = useAutoAnimate<HTMLDivElement>();
+
+  const getLanguage = (id: string) => {
+    return languages.data?.find((language) => language.id === id);
+  };
 
   const [showDomainForm, setShowDomainForm] = useState(false);
 
@@ -45,12 +55,7 @@ export const CreateSourceForm = ({
       domainId: "",
       key: "",
       text: "",
-      translations: [
-        {
-          languageId: "",
-          text: "",
-        },
-      ],
+      translations: [],
     },
   });
 
@@ -62,6 +67,8 @@ export const CreateSourceForm = ({
       })) ?? []
     );
   }, [domains.data]);
+
+  console.log(form);
 
   return (
     <FormProvider form={form}>
@@ -138,31 +145,57 @@ export const CreateSourceForm = ({
             minRows={4}
             {...form.getInputProps("text")}
           />
-          <Stack spacing="xs">
-            <Group align="center" position="apart">
-              <Text weight={500}>Attach translations</Text>
-              <Button
-                size="xs"
-                variant="subtle"
-                color="blue"
-                leftIcon={<MdAdd />}
-                onClick={() => {
-                  form.insertListItem("translations", {
-                    text: "",
-                    languageId: "",
-                  });
-                }}
-              >
-                Add another
-              </Button>
+          <Stack ref={parent} spacing="xs">
+            <Group align="center">
+              <Text weight={500}>Add translations</Text>
+              {form.errors.translations && (
+                <Text color="red" size="xs">
+                  {form.errors.translations}
+                </Text>
+              )}
             </Group>
             {form.values.translations?.map((translation, index) => (
-              <CreateTranslationForm
-                key={`create-translation-${index}`}
-                translation={translation}
-                index={index}
-              />
+              <Group
+                key={`translation-${index}`}
+                p="sm"
+                position="apart"
+                align="center"
+                sx={{
+                  backgroundColor: theme.white,
+                  borderRadius: theme.radius.sm,
+                }}
+              >
+                <Group align="center" spacing="lg">
+                  <Text color="dimmed">{index + 1}</Text>
+                  <Box>
+                    <Text size="xs" color="dimmed">
+                      {getLanguage(translation.languageId)?.name}
+                    </Text>
+                    <Text size="md" weight={500}>
+                      {translation.text}
+                    </Text>
+                  </Box>
+                </Group>
+                <Tooltip label="Remove translation" position="left">
+                  <ActionIcon
+                    onClick={() => {
+                      form.removeListItem("translations", index);
+                    }}
+                  >
+                    <MdDelete />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
             ))}
+            <CreateTranslationForm
+              existingLanguages={form.values.translations.map(
+                (t) => t.languageId
+              )}
+              onSubmit={(values) => {
+                form.insertListItem("translations", values);
+                form.setFieldError("translations", undefined);
+              }}
+            />
           </Stack>
           <Group position="right" pt="md" spacing="xs">
             <Button variant="subtle" color="gray" onClick={onCancel}>
