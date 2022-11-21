@@ -36,7 +36,7 @@ export const CreateSourceForm = ({
   onCancel,
   onSuccess,
 }: CreateSourceFormProps) => {
-  const createTranslationMutation = useCreateSource();
+  const createSourceMutation = useCreateSource();
   const theme = useMantineTheme();
   const domains = useDomains();
   const languages = useLanguages();
@@ -68,13 +68,11 @@ export const CreateSourceForm = ({
     );
   }, [domains.data]);
 
-  console.log(form);
-
   return (
     <FormProvider form={form}>
       <form
         onSubmit={form.onSubmit(async (values) => {
-          await createTranslationMutation.mutateAsync(values);
+          await createSourceMutation.mutateAsync(values);
           onSuccess?.();
         })}
       >
@@ -201,7 +199,9 @@ export const CreateSourceForm = ({
             <Button variant="subtle" color="gray" onClick={onCancel}>
               Cancel
             </Button>
-            <Button type="submit">Create</Button>
+            <Button type="submit" loading={createSourceMutation.isLoading}>
+              Create
+            </Button>
           </Group>
         </Stack>
       </form>

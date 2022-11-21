@@ -19,7 +19,7 @@ export const CreateSourceSchema = SourceSchema.omit({
 }).merge(
   z.object({
     translations: z
-      .array(CreateTranslationSchema)
+      .array(CreateTranslationSchema.partial({ sourceId: true }))
       .min(1, "At least one translation is required"),
   })
 );
