@@ -174,9 +174,16 @@ const TranslationPage = () => {
             </Group>
           )}
         </Box>
-        <Divider />
+        <Divider
+          label="Translations"
+          styles={{
+            label: {
+              fontSize: 18,
+              color: theme.colors.gray[7],
+            },
+          }}
+        />
         <Box>
-          <Text color="dimmed">Translations</Text>
           <Stack ref={parent} spacing="xs">
             {source.data?.translations.map((translation) => (
               <Stack key={translation.id} spacing={0}>
@@ -272,26 +279,28 @@ const TranslationPage = () => {
           </Stack>
           <Space h="sm" />
           {editing === "addTranslation" ? (
-            <CreateTranslationForm
-              existingLanguages={
-                source.data?.translations.map(
-                  (translation) => translation.language.id
-                ) ?? []
-              }
-              onSubmit={async (values) => {
-                await createTranslationMutation.mutateAsync({
-                  ...values,
-                  sourceId: source.data?.id as string,
-                });
-                showNotification({
-                  title: "Translation created",
-                  message: "The translation has been created successfully!",
-                  color: "green",
-                });
-                setEditing(undefined);
-              }}
-              onCancel={() => setEditing(undefined)}
-            />
+            <Box sx={{ maxWidth: theme.breakpoints.sm }}>
+              <CreateTranslationForm
+                existingLanguages={
+                  source.data?.translations.map(
+                    (translation) => translation.language.id
+                  ) ?? []
+                }
+                onSubmit={async (values) => {
+                  await createTranslationMutation.mutateAsync({
+                    ...values,
+                    sourceId: source.data?.id as string,
+                  });
+                  showNotification({
+                    title: "Translation created",
+                    message: "The translation has been created successfully!",
+                    color: "green",
+                  });
+                  setEditing(undefined);
+                }}
+                onCancel={() => setEditing(undefined)}
+              />
+            </Box>
           ) : (
             <Button
               size="xs"
@@ -305,17 +314,26 @@ const TranslationPage = () => {
             </Button>
           )}
         </Box>
-        <Divider />
+        <Divider
+          label="Usage"
+          styles={{
+            label: {
+              fontSize: 18,
+              color: theme.colors.gray[7],
+            },
+          }}
+        />
         <Stack spacing="xs">
-          <Box>
-            <Text color="dimmed">Usage</Text>
-            <Text size="xl" weight="bold">
-              xlf
-            </Text>
-          </Box>
+          <Text size="xl" weight="bold">
+            xlf
+          </Text>
           {source.data?.translations.map((translation) => (
             <Stack key={`usage-${translation.id}`} spacing="xs">
-              <Prism language="markdown" colorScheme="dark">
+              <Prism
+                language="markdown"
+                colorScheme="dark"
+                sx={{ maxWidth: theme.breakpoints.sm }}
+              >
                 {`
 <!-- ${translation.language.name} -->                 
 <trans-unit id="${source.data?.key}">
@@ -331,7 +349,11 @@ const TranslationPage = () => {
           Angular
         </Text>
 
-        <Prism language="typescript" colorScheme="dark">
+        <Prism
+          language="typescript"
+          colorScheme="dark"
+          sx={{ maxWidth: theme.breakpoints.sm }}
+        >
           {`
 // Call translation service in your component
 <div>{{ translationService.translate('${source.data?.key}') | async }}</div>            
@@ -349,7 +371,11 @@ const TranslationPage = () => {
           }}
         >
           <Stack spacing="xs" py="xs">
-            <Prism language="typescript" colorScheme="dark">
+            <Prism
+              language="typescript"
+              colorScheme="dark"
+              sx={{ maxWidth: theme.breakpoints.sm }}
+            >
               {`
 // translation.service.ts          
 import {Injectable} from '@angular/core';
@@ -364,12 +390,17 @@ export class TranslationService {
   constructor(private http: HttpClient) { }
 
   public translate(key: string): Observable<string> {
-    return this.http.post<string>('http://localhost:3000/api/translations/', { key, code: $localize.locale });
+    return this.http.post<string>('http://localhost:3000/api/translations/',
+     { key, code: $localize.locale });
   }
 }  
               `}
             </Prism>
-            <Prism language="typescript" colorScheme="dark">
+            <Prism
+              language="typescript"
+              colorScheme="dark"
+              sx={{ maxWidth: theme.breakpoints.sm }}
+            >
               {`
 // Add translation service to your component
 constructor(public translationService: TranslationService) { }            
