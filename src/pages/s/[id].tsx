@@ -1,4 +1,4 @@
-import { CreateTranslationForm } from "@/components/translations/CreateTranslationForm";
+import { CreateTranslationForm } from "@/components/translations";
 import {
   useCreateTranslation,
   useDeleteTranslation,
