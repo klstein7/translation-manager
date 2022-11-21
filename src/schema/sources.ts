@@ -21,3 +21,13 @@ export const CreateSourceSchema = SourceSchema.omit({
     translations: z.array(CreateTranslationSchema),
   })
 );
+
+export const UpdateSourceSchema = SourceSchema.partial({
+  key: true,
+  text: true,
+  domainId: true,
+}).omit({
+  createdAt: true,
+  updatedAt: true,
+  createdById: true,
+});

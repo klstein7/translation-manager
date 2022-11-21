@@ -19,7 +19,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withNormalizeCSS
         theme={{
           fontFamily: "Lexend, sans-serif",
-          colorScheme: "dark",
+          colorScheme: "light",
         }}
       >
         <ModalsProvider>

@@ -1,7 +1,7 @@
 import { CreateDomainForm } from "@/components/domains";
 import { CreateTranslationForm } from "@/components/translations";
 
-import { useCreateSource, useDomains } from "@/hooks";
+import { useCreateSource, useDomains, useLanguages } from "@/hooks";
 import { CreateSourceSchema } from "@/schema/sources";
 import {
   Box,
@@ -17,14 +17,22 @@ import {
 } from "@mantine/core";
 import { createFormContext, zodResolver } from "@mantine/form";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import type { z } from "zod";
 
 export const [FormProvider, useFormContext, useForm] =
   createFormContext<z.infer<typeof CreateSourceSchema>>();
 
-export const CreateSourceForm = () => {
+export type CreateSourceFormProps = {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+};
+
+export const CreateSourceForm = ({
+  onCancel,
+  onSuccess,
+}: CreateSourceFormProps) => {
   const createTranslationMutation = useCreateSource();
   const theme = useMantineTheme();
   const domains = useDomains();
@@ -55,22 +63,16 @@ export const CreateSourceForm = () => {
     );
   }, [domains.data]);
 
-  useEffect(() => {
-    if (form.values.domainId) {
-      setShowDomainForm(false);
-    }
-  }, [form.values.domainId]);
-
   return (
     <FormProvider form={form}>
       <form
         onSubmit={form.onSubmit(async (values) => {
           await createTranslationMutation.mutateAsync(values);
+          onSuccess?.();
         })}
       >
         <Stack align="stretch">
           <TextInput
-            variant="filled"
             label="Key"
             description="A unique key to assign to this translation"
             placeholder="e.g. pre_authorized_payments"
@@ -80,7 +82,6 @@ export const CreateSourceForm = () => {
             <Select
               clearable
               searchable
-              variant="filled"
               label="Domain"
               description="The domain this translation belongs to"
               placeholder="Select domain..."
@@ -93,13 +94,13 @@ export const CreateSourceForm = () => {
             />
             {!showDomainForm && !form.values.domainId && (
               <Button
-                color="gray"
+                color="blue"
                 variant="subtle"
                 leftIcon={<MdAdd />}
                 sx={{ flex: 0 }}
                 onClick={() => setShowDomainForm(!showDomainForm)}
               >
-                Add
+                New
               </Button>
             )}
           </Group>
@@ -114,9 +115,13 @@ export const CreateSourceForm = () => {
                 transition={{ duration: 0.2 }}
                 sx={{
                   borderRadius: theme.radius.md,
-                  border: `1px solid ${theme.colors.dark[5]}`,
+                  border: `1px solid ${theme.colors.gray[1]}`,
+                  backgroundColor: theme.white,
                 }}
               >
+                <Text size="xs" color="dimmed">
+                  Create new domain
+                </Text>
                 <CreateDomainForm
                   onCancel={() => setShowDomainForm(false)}
                   onSuccess={() => {
@@ -127,7 +132,6 @@ export const CreateSourceForm = () => {
             )}
           </AnimatePresence>
           <Textarea
-            variant="filled"
             label="Source text"
             description="The text to be translated (in English)"
             placeholder="e.g. Pre-authorized Payments"
@@ -140,7 +144,7 @@ export const CreateSourceForm = () => {
               <Button
                 size="xs"
                 variant="subtle"
-                color="gray"
+                color="blue"
                 leftIcon={<MdAdd />}
                 onClick={() => {
                   form.insertListItem("translations", {
@@ -161,7 +165,7 @@ export const CreateSourceForm = () => {
             ))}
           </Stack>
           <Group position="right" pt="md" spacing="xs">
-            <Button variant="subtle" color="gray">
+            <Button variant="subtle" color="gray" onClick={onCancel}>
               Cancel
             </Button>
             <Button type="submit">Create</Button>

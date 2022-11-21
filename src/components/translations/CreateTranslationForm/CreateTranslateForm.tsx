@@ -35,13 +35,30 @@ export const CreateTranslationForm = ({
   const [showLanguageForm, setShowLanguageForm] = useState(false);
 
   const languageSelectItems = useMemo(() => {
-    return (
+    const getLanguage = (id: string) => {
+      return languages.data?.find((language) => language.id === id);
+    };
+    let filtered =
       languages.data?.map((language) => ({
         label: `${language.name} (${language.code})`,
         value: language.id,
-      })) ?? []
-    );
-  }, [languages.data]);
+      })) ?? [];
+    filtered = filtered.filter((language) => {
+      return !form.values.translations.some(
+        (translation) => translation.languageId === language.value
+      );
+    });
+    if (form.values.translations[index]?.languageId) {
+      const language = getLanguage(form.values.translations[index]!.languageId);
+      if (language) {
+        filtered.push({
+          label: `${language.name} (${language.code})`,
+          value: language.id,
+        });
+      }
+    }
+    return filtered;
+  }, [form.values.translations, index, languages.data]);
 
   useEffect(() => {
     if (translation.languageId) {
@@ -54,12 +71,12 @@ export const CreateTranslationForm = ({
       align="stretch"
       p="sm"
       sx={{
-        backgroundColor: theme.fn.rgba(theme.colors.dark[9], 0.4),
+        backgroundColor: theme.white,
         borderRadius: theme.radius.sm,
       }}
     >
       <Group position="apart">
-        <Text size="sm">Create translation</Text>
+        <Text size="sm">Create new translation</Text>
         {(form.values.translations?.length ?? 0) > 1 && (
           <ActionIcon
             size="xs"
@@ -73,7 +90,6 @@ export const CreateTranslationForm = ({
         <Select
           clearable
           searchable
-          variant="filled"
           label="Language"
           description="The language this translation is for"
           placeholder="Select language..."
@@ -86,13 +102,13 @@ export const CreateTranslationForm = ({
         />
         {!showLanguageForm && !translation.languageId && (
           <Button
-            color="gray"
+            color="blue"
             variant="subtle"
             leftIcon={<MdAdd />}
             sx={{ flex: 0 }}
             onClick={() => setShowLanguageForm(!showLanguageForm)}
           >
-            Add
+            New
           </Button>
         )}
       </Group>
@@ -107,9 +123,13 @@ export const CreateTranslationForm = ({
             transition={{ duration: 0.2 }}
             sx={{
               borderRadius: theme.radius.md,
-              border: `1px solid ${theme.colors.dark[5]}`,
+              border: `1px solid ${theme.colors.gray[1]}`,
+              backgroundColor: theme.white,
             }}
           >
+            <Text size="xs" color="dimmed">
+              Create new language
+            </Text>
             <CreateLanguageForm
               onCancel={() => setShowLanguageForm(false)}
               onSuccess={() => {
@@ -120,7 +140,6 @@ export const CreateTranslationForm = ({
         )}
       </AnimatePresence>
       <Textarea
-        variant="filled"
         label="Translation"
         description="The translated text"
         placeholder="e.g. Paiements Préautorisé"

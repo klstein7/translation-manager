@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
 import { useMemo, useState } from "react";
@@ -19,6 +20,8 @@ import { useModals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
 
 export const TranslationsDataTable = () => {
+  const theme = useMantineTheme();
+
   const deleteSourceMutation = useDeleteSource();
 
   const router = useRouter();
@@ -48,21 +51,21 @@ export const TranslationsDataTable = () => {
   }
 
   return (
-    <Stack align="stretch">
+    <Stack align="stretch" sx={{ width: "100%" }}>
       <TextInput
         value={search}
         size="md"
-        variant="filled"
         icon={<MdSearch size={20} />}
         placeholder="Search..."
         onChange={(e) => setSearch(e.target.value)}
       />
       <DataTable
-        withBorder
+        withBorder={false}
+        minHeight={200}
         borderRadius="sm"
+        records={filteredSources ?? []}
         striped
-        highlightOnHover
-        records={filteredSources}
+        withColumnBorders
         columns={[
           {
             accessor: "key",
@@ -98,6 +101,11 @@ export const TranslationsDataTable = () => {
                   showLabel={`${translations.length} ${
                     translations.length > 1 ? "translations" : "translation"
                   }`}
+                  styles={{
+                    control: {
+                      color: theme.colors.indigo[6],
+                    },
+                  }}
                 >
                   <Stack py="xs">
                     {translations.map((translation) => (
@@ -120,7 +128,7 @@ export const TranslationsDataTable = () => {
             width: 100,
             render: ({ id, key }) => {
               return (
-                <Group align="center" spacing={5} position="right">
+                <Group align="center" spacing={5} position="center">
                   <ActionIcon
                     onClick={() => {
                       modals.openConfirmModal({

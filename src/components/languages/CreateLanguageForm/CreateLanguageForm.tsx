@@ -24,14 +24,12 @@ export const CreateLanguageForm = ({
   return (
     <Stack align="stretch">
       <TextInput
-        variant="filled"
         label="Name"
         description="The name of the language (unique)"
         placeholder="e.g. French"
         {...form.getInputProps("name")}
       />
       <TextInput
-        variant="filled"
         label="Code"
         description="The language code of the language (unique)"
         placeholder="e.g. fr"
@@ -52,7 +50,7 @@ export const CreateLanguageForm = ({
             }
           }}
         >
-          Add
+          Create
         </Button>
       </Group>
     </Stack>

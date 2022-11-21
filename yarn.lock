@@ -224,6 +224,11 @@
   dependencies:
     "@floating-ui/dom" "^1.0.5"
 
+"@formkit/auto-animate@^1.0.0-beta.5":
+  version "1.0.0-beta.5"
+  resolved "https://nexus.lending.fcc.ca/repository/npm-all/@formkit/auto-animate/-/auto-animate-1.0.0-beta.5.tgz#3fe4d520a82909cdcffa8854f26bc26ca4562045"
+  integrity sha512-WoSwyhAZPOe6RB/IgicOtCHtrWwEpfKIZ/H/nxpKfnZL9CB6hhhBGU5bCdMRw7YpAUF2CDlQa+WWh+gCqz5lDg==
+
 "@humanwhocodes/config-array@^0.11.6":
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.7.tgz#38aec044c6c828f6ed51d5d7ae3d9b9faf6dbb0f"
@@ -296,6 +301,14 @@
   dependencies:
     "@mantine/utils" "5.8.0"
     react-transition-group "4.4.2"
+
+"@mantine/prism@^5.8.0":
+  version "5.8.0"
+  resolved "https://nexus.lending.fcc.ca/repository/npm-all/@mantine/prism/-/prism-5.8.0.tgz#cda7db524a867abd86b1b8f68ac877c75e67b65a"
+  integrity sha512-5FmVX/HmLm+xPqxMQ7twn2QE96JZCY/r81k5nEDGINb17TEioU5ILhnGl05O31eS89N/g3L2vMh7n/bOiQIxJg==
+  dependencies:
+    "@mantine/utils" "5.8.0"
+    prism-react-renderer "^1.2.1"
 
 "@mantine/ssr@5.8.0":
   version "5.8.0"
@@ -2555,6 +2568,11 @@ pretty-format@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-3.8.0.tgz#bfbed56d5e9a776645f4b1ff7aa1a3ac4fa3c385"
   integrity sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==
+
+prism-react-renderer@^1.2.1:
+  version "1.3.5"
+  resolved "https://nexus.lending.fcc.ca/repository/npm-all/prism-react-renderer/-/prism-react-renderer-1.3.5.tgz#786bb69aa6f73c32ba1ee813fbe17a0115435085"
+  integrity sha512-IJ+MSwBWKG+SM3b2SUfdrhC+gu01QkV2KmRQgREThBfSQRoufqRfxfHUxpG1WcaFjP+kojcFyO9Qqtpgt3qLCg==
 
 prisma@^4.5.0:
   version "4.6.1"

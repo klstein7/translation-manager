@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 export const useSource = () => {
   const router = useRouter();
-  const id = router.query.id as string;
+  const id = router.query.id;
 
-  return trpc.sources.get.useQuery({ id });
+  return trpc.sources.get.useQuery({ id }, { enabled: !!id });
 };

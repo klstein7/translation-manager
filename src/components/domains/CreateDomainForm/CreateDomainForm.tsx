@@ -23,7 +23,6 @@ export const CreateDomainForm = ({
   return (
     <Stack align="stretch">
       <TextInput
-        variant="filled"
         label="Name"
         description="The name of the domain (unique)"
         placeholder="e.g. payments-webapp"
@@ -44,7 +43,7 @@ export const CreateDomainForm = ({
             }
           }}
         >
-          Add
+          Create
         </Button>
       </Group>
     </Stack>

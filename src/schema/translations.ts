@@ -15,3 +15,12 @@ export const CreateTranslationSchema = TranslationSchema.omit({
   updatedAt: true,
   createdById: true,
 });
+
+export const UpdateTranslationSchema = TranslationSchema.partial({
+  text: true,
+  languageId: true,
+}).omit({
+  createdAt: true,
+  updatedAt: true,
+  createdById: true,
+});

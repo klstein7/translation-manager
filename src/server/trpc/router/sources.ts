@@ -1,4 +1,4 @@
-import { CreateSourceSchema } from "@/schema/sources";
+import { CreateSourceSchema, UpdateSourceSchema } from "@/schema/sources";
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
@@ -13,6 +13,21 @@ export const sourceRouter = router({
       return ctx.prisma.source.findUniqueOrThrow({
         where: {
           id: input.id,
+        },
+        include: {
+          domain: true,
+          createdBy: true,
+          translations: {
+            include: {
+              language: true,
+              createdBy: true,
+            },
+            orderBy: {
+              language: {
+                name: "asc",
+              },
+            },
+          },
         },
       });
     }),
@@ -63,6 +78,16 @@ export const sourceRouter = router({
         where: {
           id: input.id,
         },
+      });
+    }),
+  update: publicProcedure
+    .input(UpdateSourceSchema)
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.source.update({
+        where: {
+          id: input.id,
+        },
+        data: input,
       });
     }),
 });

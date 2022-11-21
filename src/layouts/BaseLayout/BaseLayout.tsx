@@ -1,7 +1,7 @@
 import type { SidebarItemProps } from "@/components/ui";
 import { Sidebar } from "@/components/ui";
 import { MdTranslate } from "react-icons/md";
-import { Flex, Stack } from "@mantine/core";
+import { Flex, ScrollArea, Stack, useMantineTheme } from "@mantine/core";
 
 export type BaseLayoutProps = {
   topNavItems?: SidebarItemProps[];
@@ -9,12 +9,15 @@ export type BaseLayoutProps = {
 };
 
 export const BaseLayout = ({ topNavItems, children }: BaseLayoutProps) => {
+  const theme = useMantineTheme();
   return (
-    <Flex sx={{ minHeight: "100vh" }}>
+    <Flex sx={{ height: "100vh", backgroundColor: theme.colors.gray[0] }}>
       <Sidebar brandLogo={MdTranslate} topNavItems={topNavItems} />
-      <Stack px="xl" pt="xl" sx={{ flex: 1 }}>
-        {children}
-      </Stack>
+      <ScrollArea sx={{ width: "100%" }}>
+        <Stack p="xl" sx={{ flex: 1 }}>
+          {children}
+        </Stack>
+      </ScrollArea>
     </Flex>
   );
 };
