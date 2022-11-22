@@ -26,7 +26,7 @@ const Home: NextPage = () => {
       topNavItems={[
         {
           icon: MdSearch,
-          label: "Search",
+          label: "Search (not yet implemented)",
         },
         {
           icon: MdAdd,

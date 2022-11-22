@@ -14,7 +14,7 @@ export const BaseLayout = ({ topNavItems, children }: BaseLayoutProps) => {
     <Flex sx={{ height: "100vh", backgroundColor: theme.colors.gray[0] }}>
       <Sidebar brandLogo={MdTranslate} topNavItems={topNavItems} />
       <ScrollArea sx={{ width: "100%" }}>
-        <Stack p="xl" sx={{ flex: 1 }}>
+        <Stack p="xl" sx={{ flex: 1, maxWidth: theme.breakpoints.xl }}>
           {children}
         </Stack>
       </ScrollArea>

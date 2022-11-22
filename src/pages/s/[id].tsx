@@ -279,7 +279,7 @@ const TranslationPage = () => {
           </Stack>
           <Space h="sm" />
           {editing === "addTranslation" ? (
-            <Box sx={{ maxWidth: theme.breakpoints.sm }}>
+            <Box sx={{ maxWidth: theme.breakpoints.md }}>
               <CreateTranslationForm
                 existingLanguages={
                   source.data?.translations.map(
@@ -328,37 +328,57 @@ const TranslationPage = () => {
             xlf
           </Text>
           {source.data?.translations.map((translation) => (
-            <Stack key={`usage-${translation.id}`} spacing="xs">
-              <Prism
-                language="markdown"
-                colorScheme="dark"
-                sx={{ maxWidth: theme.breakpoints.sm }}
-              >
-                {`
+            <Prism
+              key={`xlf-${translation.id}`}
+              language="markdown"
+              colorScheme="dark"
+              sx={{ maxWidth: theme.breakpoints.md }}
+            >
+              {`
 <!-- ${translation.language.name} -->                 
 <trans-unit id="${source.data?.key}">
   <source>${source.data?.text}</source>
   <target>${translation.text}</target>
 </trans-unit>
 `}
-              </Prism>
-            </Stack>
+            </Prism>
           ))}
         </Stack>
-        <Text size="xl" weight="bold">
-          Angular
-        </Text>
-
-        <Prism
-          language="typescript"
-          colorScheme="dark"
-          sx={{ maxWidth: theme.breakpoints.sm }}
-        >
-          {`
+        <Stack spacing="xs">
+          <Text size="xl" weight="bold">
+            messages.properties
+          </Text>
+          {source.data?.translations.map((translation) => (
+            <Prism
+              colorScheme="dark"
+              language="clike"
+              key={`messages-${translation.id}`}
+              sx={{ maxWidth: theme.breakpoints.md }}
+            >
+              {`
+// messages_${translation.language.code}.properties
+${source.data?.domain.name}.${source.data?.key.toUpperCase()}=${
+                translation.text
+              }
+                `}
+            </Prism>
+          ))}
+        </Stack>
+        <Stack spacing="xs">
+          <Text size="xl" weight="bold">
+            Angular
+          </Text>
+          <Prism
+            language="typescript"
+            colorScheme="dark"
+            sx={{ maxWidth: theme.breakpoints.md }}
+          >
+            {`
 // Call translation service in your component
 <div>{{ translationService.translate('${source.data?.key}') | async }}</div>            
             `}
-        </Prism>
+          </Prism>
+        </Stack>
         <Divider />
         <Spoiler
           maxHeight={0}
@@ -374,7 +394,7 @@ const TranslationPage = () => {
             <Prism
               language="typescript"
               colorScheme="dark"
-              sx={{ maxWidth: theme.breakpoints.sm }}
+              sx={{ maxWidth: theme.breakpoints.md }}
             >
               {`
 // translation.service.ts          
@@ -399,7 +419,7 @@ export class TranslationService {
             <Prism
               language="typescript"
               colorScheme="dark"
-              sx={{ maxWidth: theme.breakpoints.sm }}
+              sx={{ maxWidth: theme.breakpoints.md }}
             >
               {`
 // Add translation service to your component
