@@ -366,6 +366,23 @@ ${source.data?.domain.name}.${source.data?.key.toUpperCase()}=${
         </Stack>
         <Stack spacing="xs">
           <Text size="xl" weight="bold">
+            API endpoints
+          </Text>
+          {source.data?.translations.map((translation) => (
+            <Prism
+              colorScheme="dark"
+              language="markdown"
+              key={`api-${translation.id}`}
+              sx={{ maxWidth: theme.breakpoints.md }}
+            >
+              {`
+${window.location.origin}/api/translations?key=${source.data?.key}&code=${translation.language.code}
+              `}
+            </Prism>
+          ))}
+        </Stack>
+        <Stack spacing="xs">
+          <Text size="xl" weight="bold">
             Angular
           </Text>
           <Prism
@@ -402,6 +419,8 @@ import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
+const BASE_URI = '${window.location.origin}/api/translations';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -410,8 +429,7 @@ export class TranslationService {
   constructor(private http: HttpClient) { }
 
   public translate(key: string): Observable<string> {
-    return this.http.post<string>('http://localhost:3000/api/translations/',
-     { key, code: $localize.locale });
+    return this.http.get<string>(\`\${BASE_URI}?key=\${key}&code=\${$localize.locale}\`);
   }
 }  
               `}

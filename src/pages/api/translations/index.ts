@@ -2,7 +2,7 @@ import { prisma } from "@/server/db/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const payload = req.body as { key: string; code: string };
+  const payload = req.query as { key: string; code: string };
 
   const translation = await prisma.translation.findFirst({
     where: {
