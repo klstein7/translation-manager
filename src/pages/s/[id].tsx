@@ -16,6 +16,7 @@ import {
   Box,
   Breadcrumbs,
   Button,
+  CopyButton,
   Divider,
   FocusTrap,
   Group,
@@ -32,10 +33,17 @@ import {
 import { useModals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
 import { Prism } from "@mantine/prism";
-import { IconHome } from "@tabler/icons";
+import { IconCopy, IconHome } from "@tabler/icons";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { MdAdd, MdDelete, MdEdit, MdWarning } from "react-icons/md";
+import {
+  MdAdd,
+  MdCheck,
+  MdCopyAll,
+  MdDelete,
+  MdEdit,
+  MdWarning,
+} from "react-icons/md";
 
 const TranslationPage = () => {
   const router = useRouter();
@@ -162,6 +170,24 @@ const TranslationPage = () => {
               <Text size="xl" weight="bold">
                 {source.data?.text}
               </Text>
+              <Space w={5} />
+              <CopyButton value={source.data?.text ?? ""} timeout={3000}>
+                {({ copied, copy }) => (
+                  <Tooltip
+                    withArrow
+                    color={copied ? "indigo" : undefined}
+                    label={copied ? "Copied" : "Copy"}
+                  >
+                    <ActionIcon size="xs" onClick={copy}>
+                      {copied ? (
+                        <MdCheck color={theme.colors.indigo[7]} size={15} />
+                      ) : (
+                        <MdCopyAll size={15} />
+                      )}
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </CopyButton>
               <Tooltip label="Edit source text">
                 <ActionIcon
                   color="gray"
@@ -214,6 +240,27 @@ const TranslationPage = () => {
                     <Text size="xl" weight="bold">
                       {translation.text}
                     </Text>
+                    <Space w={5} />
+                    <CopyButton value={translation.text ?? ""} timeout={3000}>
+                      {({ copied, copy }) => (
+                        <Tooltip
+                          withArrow
+                          color={copied ? "indigo" : undefined}
+                          label={copied ? "Copied" : "Copy"}
+                        >
+                          <ActionIcon size="xs" onClick={copy}>
+                            {copied ? (
+                              <MdCheck
+                                color={theme.colors.indigo[7]}
+                                size={15}
+                              />
+                            ) : (
+                              <MdCopyAll size={15} />
+                            )}
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                    </CopyButton>
                     <Tooltip
                       label={`Edit ${translation.language.name} translation`}
                     >
@@ -325,7 +372,7 @@ const TranslationPage = () => {
         />
         <Stack spacing="xs">
           <Text size="xl" weight="bold">
-            xlf
+            .xlf
           </Text>
           {source.data?.translations.map((translation) => (
             <Prism
@@ -366,7 +413,7 @@ ${source.data?.domain.name}.${source.data?.key.toUpperCase()}=${
         </Stack>
         <Stack spacing="xs">
           <Text size="xl" weight="bold">
-            API endpoints
+            API Endpoints
           </Text>
           {source.data?.translations.map((translation) => (
             <Prism

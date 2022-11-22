@@ -1,11 +1,13 @@
 import { CreateSourceForm } from "@/components/sources";
-import { TranslationsDataTable } from "@/components/sources/SourceDataTable";
+import { SourceDataTable } from "@/components/sources/SourceDataTable";
+import { useSources } from "@/hooks";
 import { BaseLayout } from "@/layouts/BaseLayout";
 import {
   Anchor,
   Box,
   Breadcrumbs,
   Group,
+  LoadingOverlay,
   Stack,
   useMantineTheme,
 } from "@mantine/core";
@@ -21,6 +23,12 @@ const Home: NextPage = () => {
   const theme = useMantineTheme();
   const modals = useModals();
   const router = useRouter();
+  const sources = useSources();
+
+  if (sources.isLoading) {
+    return <LoadingOverlay visible />;
+  }
+
   return (
     <BaseLayout
       topNavItems={[
@@ -82,7 +90,7 @@ const Home: NextPage = () => {
             </Group>
           </Anchor>
         </Breadcrumbs>
-        <TranslationsDataTable />
+        <SourceDataTable sources={sources.data ?? []} />
       </Stack>
     </BaseLayout>
   );
