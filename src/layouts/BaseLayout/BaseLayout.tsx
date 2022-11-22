@@ -12,7 +12,11 @@ export const BaseLayout = ({ topNavItems, children }: BaseLayoutProps) => {
   const theme = useMantineTheme();
   return (
     <Flex sx={{ height: "100vh", backgroundColor: theme.colors.gray[0] }}>
-      <Sidebar brandLogo={MdTranslate} topNavItems={topNavItems} />
+      <Sidebar
+        brandLogo={MdTranslate}
+        brandLogoTooltip="Translation Manager"
+        topNavItems={topNavItems}
+      />
       <ScrollArea sx={{ width: "100%" }}>
         <Stack p="xl" sx={{ flex: 1, maxWidth: theme.breakpoints.xl }}>
           {children}

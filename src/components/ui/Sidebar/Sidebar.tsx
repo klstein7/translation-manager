@@ -1,5 +1,12 @@
 import type { IconType } from "react-icons";
-import { Center, Drawer, Stack, Tooltip, useMantineTheme } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Drawer,
+  Stack,
+  Tooltip,
+  useMantineTheme,
+} from "@mantine/core";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { MdHome } from "react-icons/md";
@@ -7,11 +14,13 @@ import { useRouter } from "next/router";
 
 export type SidebarProps = {
   brandLogo: IconType;
+  brandLogoTooltip?: string;
   topNavItems?: SidebarItemProps[];
 };
 
 export const Sidebar = ({
   brandLogo: BrandLogo,
+  brandLogoTooltip,
   topNavItems,
 }: SidebarProps) => {
   const router = useRouter();
@@ -32,7 +41,16 @@ export const Sidebar = ({
       }}
     >
       <Stack align="center" sx={{ width: "100%" }}>
-        <BrandLogo size={30} />
+        <Tooltip
+          withArrow
+          color="indigo"
+          label={brandLogoTooltip}
+          position="right"
+        >
+          <Center sx={{ width: "100%" }}>
+            <BrandLogo size={30} />
+          </Center>
+        </Tooltip>
         <Stack sx={{ width: "100%" }} spacing={0}>
           {topNavItems?.map((item, index) => (
             <SidebarItem key={`top-nav-${index}`} {...item} />
@@ -67,7 +85,7 @@ export const SidebarItem = ({
 }: SidebarItemProps) => {
   const theme = useMantineTheme();
   return (
-    <Tooltip label={label} position="right">
+    <Tooltip withArrow color="indigo" label={label} position="right">
       <Center
         component={motion.div}
         py="xs"
