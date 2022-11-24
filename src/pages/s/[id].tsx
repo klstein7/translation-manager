@@ -33,7 +33,7 @@ import {
 import { useModals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
 import { Prism } from "@mantine/prism";
-import { IconCopy, IconHome } from "@tabler/icons";
+import { IconHome } from "@tabler/icons";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import {
@@ -361,106 +361,108 @@ const TranslationPage = () => {
             </Button>
           )}
         </Box>
-        <Divider
-          label="Usage"
-          styles={{
-            label: {
-              fontSize: 18,
-              color: theme.colors.gray[7],
-            },
-          }}
-        />
-        <Stack spacing="xs">
-          <Text size="xl" weight="bold">
-            .xlf
-          </Text>
-          {source.data?.translations.map((translation) => (
-            <Prism
-              key={`xlf-${translation.id}`}
-              language="markdown"
-              colorScheme="dark"
-              sx={{ maxWidth: theme.breakpoints.md }}
-            >
-              {`
+        {source.data?.translations && source.data?.translations.length > 0 && (
+          <Stack>
+            <Divider
+              label="Usage"
+              styles={{
+                label: {
+                  fontSize: 18,
+                  color: theme.colors.gray[7],
+                },
+              }}
+            />
+            <Stack spacing="xs">
+              <Text size="xl" weight="bold">
+                .xlf
+              </Text>
+              {source.data?.translations.map((translation) => (
+                <Prism
+                  key={`xlf-${translation.id}`}
+                  language="markdown"
+                  colorScheme="dark"
+                  sx={{ maxWidth: theme.breakpoints.md }}
+                >
+                  {`
 <!-- ${translation.language.name} -->                 
 <trans-unit id="${source.data?.key}">
   <source>${source.data?.text}</source>
   <target>${translation.text}</target>
 </trans-unit>
 `}
-            </Prism>
-          ))}
-        </Stack>
-        <Stack spacing="xs">
-          <Text size="xl" weight="bold">
-            messages.properties
-          </Text>
-          {source.data?.translations.map((translation) => (
-            <Prism
-              colorScheme="dark"
-              language="clike"
-              key={`messages-${translation.id}`}
-              sx={{ maxWidth: theme.breakpoints.md }}
-            >
-              {`
+                </Prism>
+              ))}
+            </Stack>
+            <Stack spacing="xs">
+              <Text size="xl" weight="bold">
+                messages.properties
+              </Text>
+              {source.data?.translations.map((translation) => (
+                <Prism
+                  colorScheme="dark"
+                  language="clike"
+                  key={`messages-${translation.id}`}
+                  sx={{ maxWidth: theme.breakpoints.md }}
+                >
+                  {`
 // messages_${translation.language.code}.properties
 ${source.data?.domain.name}.${source.data?.key.toUpperCase()}=${
-                translation.text
-              }
+                    translation.text
+                  }
                 `}
-            </Prism>
-          ))}
-        </Stack>
-        <Stack spacing="xs">
-          <Text size="xl" weight="bold">
-            API Endpoints
-          </Text>
-          {source.data?.translations.map((translation) => (
-            <Prism
-              colorScheme="dark"
-              language="markdown"
-              key={`api-${translation.id}`}
-              sx={{ maxWidth: theme.breakpoints.md }}
-            >
-              {`
+                </Prism>
+              ))}
+            </Stack>
+            <Stack spacing="xs">
+              <Text size="xl" weight="bold">
+                API Endpoints
+              </Text>
+              {source.data?.translations.map((translation) => (
+                <Prism
+                  colorScheme="dark"
+                  language="markdown"
+                  key={`api-${translation.id}`}
+                  sx={{ maxWidth: theme.breakpoints.md }}
+                >
+                  {`
 ${window.location.origin}/api/translations?key=${source.data?.key}&code=${translation.language.code}
               `}
-            </Prism>
-          ))}
-        </Stack>
-        <Stack spacing="xs">
-          <Text size="xl" weight="bold">
-            Angular
-          </Text>
-          <Prism
-            language="typescript"
-            colorScheme="dark"
-            sx={{ maxWidth: theme.breakpoints.md }}
-          >
-            {`
+                </Prism>
+              ))}
+            </Stack>
+            <Stack spacing="xs">
+              <Text size="xl" weight="bold">
+                Angular
+              </Text>
+              <Prism
+                language="typescript"
+                colorScheme="dark"
+                sx={{ maxWidth: theme.breakpoints.md }}
+              >
+                {`
 // Call translation service in your component
 <div>{{ translationService.translate('${source.data?.key}') | async }}</div>            
             `}
-          </Prism>
-        </Stack>
-        <Divider />
-        <Spoiler
-          maxHeight={0}
-          hideLabel="Hide"
-          showLabel="Angular service setup"
-          styles={{
-            control: {
-              color: theme.colors.indigo[6],
-            },
-          }}
-        >
-          <Stack spacing="xs" py="xs">
-            <Prism
-              language="typescript"
-              colorScheme="dark"
-              sx={{ maxWidth: theme.breakpoints.md }}
+              </Prism>
+            </Stack>
+            <Divider />
+            <Spoiler
+              maxHeight={0}
+              hideLabel="Hide"
+              showLabel="Angular service setup"
+              styles={{
+                control: {
+                  color: theme.colors.indigo[6],
+                },
+              }}
             >
-              {`
+              <Stack spacing="xs" py="xs">
+                <Prism
+                  language="typescript"
+                  colorScheme="dark"
+                  sx={{ maxWidth: theme.breakpoints.md }}
+                >
+                  {`
 // translation.service.ts          
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
@@ -480,19 +482,21 @@ export class TranslationService {
   }
 }  
               `}
-            </Prism>
-            <Prism
-              language="typescript"
-              colorScheme="dark"
-              sx={{ maxWidth: theme.breakpoints.md }}
-            >
-              {`
+                </Prism>
+                <Prism
+                  language="typescript"
+                  colorScheme="dark"
+                  sx={{ maxWidth: theme.breakpoints.md }}
+                >
+                  {`
 // Add translation service to your component
 constructor(public translationService: TranslationService) { }            
             `}
-            </Prism>
+                </Prism>
+              </Stack>
+            </Spoiler>
           </Stack>
-        </Spoiler>
+        )}
       </Stack>
     </BaseLayout>
   );
