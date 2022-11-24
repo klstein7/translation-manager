@@ -120,7 +120,7 @@ export const SourceDataTable = ({ sources }: SourceDataTableProps) => {
   return (
     <Stack align="stretch" sx={{ width: "100%" }}>
       <Grid>
-        <Grid.Col sm={12} md={4}>
+        <Grid.Col sm={12} md={6} xl={4}>
           <Select
             value={domainId}
             searchable
@@ -132,7 +132,7 @@ export const SourceDataTable = ({ sources }: SourceDataTableProps) => {
             onChange={(value) => setDomainId(value)}
           />
         </Grid.Col>
-        <Grid.Col sm={12} md={4}>
+        <Grid.Col sm={12} md={6} xl={4}>
           <Select
             value={languageId}
             searchable
